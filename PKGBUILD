@@ -1,24 +1,28 @@
 # Maintainer: Mahmut Dikcizgi <boogiepop a~t gmx com>
+# Maintainer: 7Ji <pugokushin@gmail.com>
 
 pkgname=gl4es-git
-pkgver=r2627.57240b0f
-pkgrel=2
+pkgver=r2647.e39434a2
+pkgrel=1
 pkgdesc='OpenGL for GLES Hardware'
-arch=('aarch64' 'arm7h')
+arch=('x86_64' 'aarch64' 'arm7h')
 url='https://github.com/ptitSeb/gl4es'
 license=('MIT')
-depends=('gcc-libs' 'coreutils')
+depends=('coreutils' 'libx11')
 makedepends=('cmake')
 options=(!lto debug strip)
 source=(git+https://github.com/ptitSeb/gl4es.git#branch=master)
 sha256sums=('SKIP')
 
-build() {
-	cd gl4es
-	mkdir -p build
-	cd build
-	cmake .. -DODROID=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo
-	make -j$(nproc)
+prepare() {
+  local _cmake_opts=(
+    '-DCMAKE_BUILD_TYPE=RelWithDebInfo'
+  )
+  if [[ ${CARCH} != 'x86_64' ]]; then
+    _cmake_opts+=('-DODROID=1')
+  fi
+  mkdir build
+  cmake -S gl4es -B build "${_cmake_opts[@]}"
 }
 
 pkgver() {
@@ -26,10 +30,14 @@ pkgver() {
   printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
+build() {
+  cmake --build build
+}
+
+
 package() {
-  	provides=(gl4es $pkgname)
-  	conflicts=(gl4es $pkgname)
-  	cd gl4es/build
-    DESTDIR="$pkgdir" make install
-    ln -s libGL.so.1 "$pkgdir"/usr/lib/gl4es/libGL.so
+  provides=(gl4es $pkgname)
+  conflicts=(gl4es $pkgname)
+  DESTDIR="$pkgdir" cmake --install build
+  ln -s libGL.so.1 "$pkgdir"/usr/lib/gl4es/libGL.so
 }
