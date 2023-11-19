@@ -10,7 +10,7 @@ url='https://github.com/ptitSeb/gl4es'
 license=('MIT')
 depends=('coreutils' 'libx11')
 makedepends=('cmake')
-options=(!lto debug strip)
+options=(!lto strip)
 source=(git+https://github.com/ptitSeb/gl4es.git#branch=master)
 sha256sums=('SKIP')
 
