@@ -5,13 +5,12 @@ pkgbase = gl4es-git
 	url = https://github.com/ptitSeb/gl4es
 	arch = x86_64
 	arch = aarch64
-	arch = arm7h
+	arch = armv7h
 	license = MIT
 	makedepends = cmake
 	depends = coreutils
 	depends = libx11
 	options = !lto
-	options = debug
 	options = strip
 	source = git+https://github.com/ptitSeb/gl4es.git#branch=master
 	sha256sums = SKIP
