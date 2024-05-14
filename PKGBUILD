@@ -14,7 +14,12 @@ options=(!lto strip)
 source=(git+https://github.com/ptitSeb/gl4es.git#branch=master)
 sha256sums=('SKIP')
 
-prepare() {
+pkgver() {
+  cd gl4es
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
   local _cmake_opts=(
     '-DCMAKE_BUILD_TYPE=RelWithDebInfo'
   )
@@ -23,17 +28,8 @@ prepare() {
   fi
   mkdir -p build
   cmake -S gl4es -B build "${_cmake_opts[@]}"
-}
-
-pkgver() {
-  cd gl4es
-  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
-}
-
-build() {
   cmake --build build
 }
-
 
 package() {
   provides=(gl4es $pkgname)
