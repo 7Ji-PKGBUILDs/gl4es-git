@@ -22,6 +22,7 @@ pkgver() {
 build() {
   local _cmake_opts=(
     '-DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
   )
   if [[ ${CARCH} != 'x86_64' ]]; then
     _cmake_opts+=('-DODROID=1')
