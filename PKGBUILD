@@ -2,7 +2,7 @@
 # Maintainer: 7Ji <pugokushin@gmail.com>
 
 pkgname=gl4es-git
-pkgver=r2647.e39434a2
+pkgver=r2743.e6bb082b
 pkgrel=1
 pkgdesc='OpenGL for GLES Hardware'
 arch=('x86_64' 'aarch64' 'armv7h')
@@ -10,7 +10,7 @@ url='https://github.com/ptitSeb/gl4es'
 license=('MIT')
 depends=('coreutils' 'libx11')
 makedepends=('cmake')
-options=(!lto strip)
+options=(!lto strip !debug)
 source=(git+https://github.com/ptitSeb/gl4es.git#branch=master)
 sha256sums=('SKIP')
 
@@ -21,7 +21,8 @@ pkgver() {
 
 build() {
   local _cmake_opts=(
-    '-DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    '-DCMAKE_BUILD_TYPE=Release'
+    '-DCMAKE_INSTALL_PREFIX=/'
     '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
   )
   if [[ ${CARCH} != 'x86_64' ]]; then
@@ -33,8 +34,12 @@ build() {
 }
 
 package() {
-  provides=(gl4es $pkgname)
-  conflicts=(gl4es $pkgname)
+  provides=("gl4es=$pkgver" "$pkgname")
+  conflicts=(gl4es "$pkgname")
+  
   DESTDIR="$pkgdir" cmake --install build
+
+  mkdir -p "$pkgdir"/usr/lib/gl4es/
+  
   ln -s libGL.so.1 "$pkgdir"/usr/lib/gl4es/libGL.so
 }
